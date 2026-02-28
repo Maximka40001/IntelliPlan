@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/education.png">
+<title>IntelliPlan — Вход в систему</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent: #3b82f6; --accent2: #6366f1;
+  --bg-0: #0f1117; --bg-1: #161b27; --bg-2: #1e2436;
+  --border: #2a3348; --text-1: #f1f5f9; --text-2: #94a3b8; --text-3: #64748b;
+  --red: #ef4444; --green: #22c55e; --radius: 12px;
+  --shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+[data-theme="light"] {
+  --bg-0: #f0f4f8; --bg-1: #ffffff; --bg-2: #f8fafc;
+  --border: #e2e8f0; --text-1: #0f172a; --text-2: #475569; --text-3: #94a3b8;
+  --shadow: 0 24px 64px rgba(0,0,0,.1);
+}
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-0); color: var(--text-1);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+/* Background decoration */
+body::before, body::after {
+  content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+}
+body::before {
+  width: 600px; height: 600px; top: -200px; left: -200px;
+  background: radial-gradient(circle, rgba(59,130,246,.12) 0%, transparent 70%);
+}
+body::after {
+  width: 500px; height: 500px; bottom: -150px; right: -150px;
+  background: radial-gradient(circle, rgba(99,102,241,.1) 0%, transparent 70%);
+}
+
+.theme-btn {
+  position: fixed; top: 20px; right: 20px;
+  background: var(--bg-1); border: 1px solid var(--border);
+  color: var(--text-2); border-radius: 8px; padding: 8px 12px;
+  cursor: pointer; font-size: .85rem; z-index: 10;
+  transition: all .2s ease;
+}
+.theme-btn:hover { color: var(--text-1); }
+
+.card {
+  background: var(--bg-1); border: 1px solid var(--border);
+  border-radius: 18px; box-shadow: var(--shadow);
+  width: 100%; max-width: 420px; padding: 40px 36px;
+  position: relative; z-index: 1;
+}
+
+.logo { text-align: center; margin-bottom: 32px; }
+.logo-icon { font-size: 2.8rem; display: block; margin-bottom: 10px; }
+.logo h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-1); }
+.logo p  { font-size: .82rem; color: var(--text-3); margin-top: 4px; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: .78rem; font-weight: 600;
+  color: var(--text-2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+.form-group input {
+  width: 100%; background: var(--bg-2); border: 1px solid var(--border);
+  color: var(--text-1); border-radius: 9px; padding: 11px 14px;
+  font-size: .9rem; outline: none; transition: border-color .2s ease;
+}
+.form-group input:focus { border-color: var(--accent); }
+.form-group input::placeholder { color: var(--text-3); }
+
+.btn-login {
+  width: 100%; background: var(--accent); color: #fff;
+  border: none; border-radius: 9px; padding: 13px;
+  font-size: .9rem; font-weight: 600; cursor: pointer;
+  transition: all .2s ease; margin-top: 8px;
+}
+.btn-login:hover { background: #2563eb; transform: translateY(-1px); }
+.btn-login:active { transform: translateY(0); }
+.btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+.error-box {
+  background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3);
+  border-radius: 9px; padding: 10px 14px;
+  font-size: .82rem; color: #f87171; margin-bottom: 16px; display: none;
+}
+
+.divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+.roles-list { display: flex; flex-direction: column; gap: 8px; }
+.role-row {
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.role-badge {
+  padding: 3px 10px; border-radius: 20px; font-size: .68rem; font-weight: 700;
+  white-space: nowrap; flex-shrink: 0;
+}
+.badge-admin  { background: rgba(239,68,68,.2);  color: #f87171; }
+.badge-edu    { background: rgba(34,197,94,.2);  color: #4ade80; }
+.badge-teacher{ background: rgba(245,158,11,.2); color: #fbbf24; }
+.badge-student{ background: rgba(59,130,246,.2);  color: #60a5fa; }
+.role-info { font-size: .75rem; }
+.role-name { font-weight: 600; color: var(--text-1); }
+.role-desc { color: var(--text-3); margin-top: 1px; }
+
+.roles-title { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text-3); margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<button class="theme-btn" onclick="toggleTheme()">🌓 Тема</button>
+
+<div class="card">
+  <div class="logo">
+    <span class="logo-icon">🎓</span>
+    <h1>IntelliPlan</h1>
+    <p>Система управления расписанием · 2025–2026</p>
+  </div>
+
+  <div class="error-box" id="errBox"></div>
+
+  <div class="form-group">
+    <label>Имя пользователя</label>
+    <input type="text" id="username" placeholder="Введите логин" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label>Пароль</label>
+    <input type="password" id="password" placeholder="Введите пароль" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <button class="btn-login" id="loginBtn" onclick="doLogin()">Войти в систему</button>
+
+  <div class="divider"></div>
+
+  <div class="roles-title">Доступные роли</div>
+  <div class="roles-list">
+    <div class="role-row">
+      <span class="role-badge badge-admin">ADMIN</span>
+      <div class="role-info">
+        <div class="role-name">Администратор</div>
+        <div class="role-desc">Полный доступ: расписание, генерация, удаление, дисциплины, AI-чат</div>
+      </div>
+    </div>
+    <div class="role-row">
+      <span class="role-badge badge-edu">EDU</span>
+      <div class="role-info">
+        <div class="role-name">Учебная часть</div>
+        <div class="role-desc">Составление расписания, AI-чат, просмотр часов</div>
+      </div>
+    </div>
+    <div class="role-row">
+      <span class="role-badge badge-teacher">TEACHER</span>
+      <div class="role-info">
+        <div class="role-name">Преподаватель</div>
+        <div class="role-desc">Своё расписание, свои часы по дисциплинам (только чтение)</div>
+      </div>
+    </div>
+    <div class="role-row">
+      <span class="role-badge badge-student">STUDENT</span>
+      <div class="role-info">
+        <div class="role-name">Студент</div>
+        <div class="role-desc">Просмотр расписания и часов учебных групп</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleTheme() {
+  const h = document.documentElement;
+  h.dataset.theme = h.dataset.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('ip-theme', h.dataset.theme);
+}
+(function() {
+  const s = localStorage.getItem('ip-theme');
+  if (s) document.documentElement.dataset.theme = s;
+})();
+
+async function doLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('errBox');
+
+  if (!u || !p) { showErr('Введите логин и пароль'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Вход…';
+  err.style.display = 'none';
+
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await r.json();
+    if (data.success) {
+      btn.textContent = '✓ Успешно';
+      setTimeout(() => window.location.href = '/dashboard', 400);
+    } else {
+      showErr(data.message || 'Неверные данные');
+      btn.disabled = false;
+      btn.textContent = 'Войти в систему';
+    }
+  } catch(e) {
+    showErr('Ошибка соединения с сервером');
+    btn.disabled = false;
+    btn.textContent = 'Войти в систему';
+  }
+}
+
+function showErr(msg) {
+  const e = document.getElementById('errBox');
+  e.textContent = msg; e.style.display = 'block';
+}
+</script>
+</body>
+</html>

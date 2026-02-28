@@ -1,0 +1,175 @@
+/**
+ * Chat Management Module
+ * Handles AI chat functionality with message history
+ * @version 2.3.0
+ */
+
+(function() {
+    'use strict';
+    
+    const API_ENDPOINTS = {
+        CHAT: '/api/chat'
+    };
+    
+    class ChatManager {
+        constructor() {
+            this.messageHistory = [];
+            this.maxHistory = 50;
+            this.isProcessing = false;
+            this.init();
+        }
+        
+        init() {
+            const input = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendButton');
+            
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+            }
+            
+            if (sendBtn) {
+                sendBtn.addEventListener('click', () => this.sendMessage());
+            }
+        }
+        
+        addMessage(text, type) {
+            const messagesDiv = document.getElementById('chatMessages');
+            if (!messagesDiv) {
+                console.error('Chat messages container not found');
+                return;
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            
+            messagesDiv.appendChild(messageDiv);
+            this.scrollToBottom(messagesDiv);
+            
+            // Add to history
+            this.messageHistory.push({ text, type, timestamp: Date.now() });
+            
+            // Limit history size
+            if (this.messageHistory.length > this.maxHistory) {
+                this.messageHistory.shift();
+            }
+        }
+        
+        removeLastMessage() {
+            const messagesDiv = document.getElementById('chatMessages');
+            if (messagesDiv && messagesDiv.lastChild) {
+                messagesDiv.removeChild(messagesDiv.lastChild);
+                this.messageHistory.pop();
+            }
+        }
+        
+        scrollToBottom(element) {
+            element.scrollTop = element.scrollHeight;
+        }
+        
+        async sendMessage() {
+            if (this.isProcessing) return;
+            
+            const input = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            if (!input || !sendButton) return;
+            
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            this.addMessage(message, 'user');
+            input.value = '';
+            
+            // Disable controls
+            this.isProcessing = true;
+            sendButton.disabled = true;
+            
+            // Show processing message
+            this.addMessage('⏳ Обработка запроса...', 'ai');
+            
+            try {
+                const response = await fetch(API_ENDPOINTS.CHAT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Remove processing message
+                this.removeLastMessage();
+                
+                // Handle response
+                if (data.success) {
+                    if (data.response.regenerated) {
+                        this.addMessage(data.response.message, 'success');
+                        
+                        // Reload page after 2 seconds
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        const responseText = data.response.message || JSON.stringify(data.response);
+                        this.addMessage(responseText, 'ai');
+                    }
+                } else {
+                    const errorText = data.response?.message || 'Ошибка обработки запроса';
+                    this.addMessage(errorText, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                
+                // Remove processing message
+                this.removeLastMessage();
+                
+                this.addMessage('Ошибка соединения с сервером', 'error');
+            } finally {
+                this.isProcessing = false;
+                sendButton.disabled = false;
+                input.focus();
+            }
+        }
+        
+        sendExampleQuery(text) {
+            const input = document.getElementById('chatInput');
+            if (input) {
+                input.value = text;
+                this.sendMessage();
+            }
+        }
+        
+        clearHistory() {
+            this.messageHistory = [];
+            const messagesDiv = document.getElementById('chatMessages');
+            if (messagesDiv) {
+                messagesDiv.innerHTML = '';
+            }
+        }
+    }
+    
+    // Initialize and expose globally
+    window.chatManager = new ChatManager();
+    
+    // Setup global functions for backward compatibility
+    window.sendMessage = function() {
+        return window.chatManager.sendMessage();
+    };
+    
+    window.sendExampleQuery = function(element) {
+        const query = element.textContent;
+        return window.chatManager.sendExampleQuery(query);
+    };
+    
+})();

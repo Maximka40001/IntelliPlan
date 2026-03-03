@@ -1,0 +1,11 @@
+ortools
+sqlalchemy
+fastapi
+uvicorn
+jinja2
+psycopg2-binary
+python-dotenv
+pydantic
+groq
+itsdangerous
+

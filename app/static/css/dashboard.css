@@ -1,0 +1,146 @@
+/* Dashboard Specific Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-left h1 {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+
+.header-left p {
+    opacity: 0.9;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.user-info {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.role-badge.admin {
+    background: var(--error-color);
+}
+
+.role-badge.educational {
+    background: var(--success-color);
+}
+
+.role-badge.student {
+    background: #4dabf7;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all var(--transition-speed);
+}
+
+.logout-button:hover {
+    background: white;
+    color: var(--primary-color);
+}
+
+.generate-button {
+    padding: 12px 25px;
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.generate-button:hover {
+    background: #40c057;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(81, 207, 102, 0.3);
+}
+
+.delete-button {
+    padding: 12px 25px;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.delete-button:hover {
+    background: #fa5252;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.action-button {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background var(--transition-speed);
+}
+
+.action-button:hover {
+    background: var(--primary-dark);
+}
+
+/* Responsive Dashboard */
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .header-right {
+        text-align: center;
+    }
+    
+    .stats {
+        justify-content: space-around;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-left h1 {
+        font-size: 1.8em;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button,
+    .action-buttons select {
+        width: 100%;
+    }
+}

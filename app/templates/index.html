@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/education.png">
+    <title>Система управления расписанием</title>
+    <link rel="stylesheet" href="/static/css/main.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" id="themeToggle">🌙 <span>Тёмная</span></button>
+            <h1>📚 Система управления расписанием</h1>
+            <p>Учебный год 2025-2026</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_lessons }}</div>
+                    <div class="stat-label">Занятий</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_groups }}</div>
+                    <div class="stat-label">Групп</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_teachers }}</div>
+                    <div class="stat-label">Преподавателей</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_subjects }}</div>
+                    <div class="stat-label">Предметов</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="schedule-panel">
+                <h2>📅 Расписание занятий</h2>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Группа:</label>
+                        <select id="groupFilter">
+                            <option value="all">Все группы</option>
+                            {% for group in groups %}
+                            <option value="{{ group }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label>Дата с:</label>
+                        <input type="date" id="dateFrom">
+
+                        <label>Дата по:</label>
+                        <input type="date" id="dateTo">
+
+                        <button class="btn btn-primary" onclick="applyFilters()">Применить</button>
+                    </div>
+                </div>
+
+                <div id="scheduleContent">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>День</th>
+                                <th>Время</th>
+                                <th>Группа</th>
+                                <th>Предмет</th>
+                                <th>Преподаватель</th>
+                                <th>Аудитория</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody">
+                            {% for item in schedule_items %}
+                            <tr>
+                                <td><span class="date-badge">{{ item.date }}</span></td>
+                                <td>{{ item.day_name }}</td>
+                                <td><span class="time-badge">{{ item.time }}</span></td>
+                                <td><strong>{{ item.group_name }}</strong></td>
+                                <td>{{ item.subject_name }}</td>
+                                <td>{{ item.teacher_name }}</td>
+                                <td>{{ item.classroom }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="chat-panel">
+                <div class="chat-header">🤖 AI Помощник</div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="example-queries">
+                        <h4>Примеры запросов:</h4>
+                        <ul>
+                            <li onclick="sendExampleQuery(this)">преподаватель Иванов не сможет выйти с 1 по 5 число</li>
+                            <li onclick="sendExampleQuery(this)">учитель Петров болеет с 15 по 20 декабря</li>
+                            <li onclick="sendExampleQuery(this)">Сидоров в отпуске с 10 по 15</li>
+                        </ul>
+                    </div>
+
+                    <div class="message ai">
+                        Привет! Я AI помощник по управлению расписанием.
+                        Вы можете сообщить мне об отсутствии преподавателя, и я автоматически перестрою расписание.
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Напишите сообщение...">
+                        <button id="sendButton">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/theme.min.js"></script>
+    <script src="/static/js/schedule.min.js"></script>
+    <script src="/static/js/chat.min.js"></script>
+</body>
+</html>
